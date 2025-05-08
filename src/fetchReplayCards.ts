@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { COOKIES, X_REQUEST_TOKEN } from './constants'
-import { DeckList, getDeckList } from './getDeckList'
+import { DeckData, DeckList, getDeckList } from './getDeckList'
 
 interface Player {
   id: string
@@ -33,10 +33,36 @@ export const fetchReplayCards = async (tableId: string): Promise<ReplayData> => 
   const tableInfo = tableInfoResponse.data
   const gameData = data.data.logs
   const players = data.data.players
-  const deckPacket1 = gameData[3]
-  const deckPacket2 = gameData[5]
-  const deckList1 = await getDeckList(deckPacket1)
-  const deckList2 = await getDeckList(deckPacket2)
+  let deckData1: DeckData | null = null
+  let deckData2: DeckData | null = null
+  let keepLooking = true
+  let i = 0
+
+  while (keepLooking) {
+    if (i >= 20) {
+      keepLooking = false
+      break
+    }
+    const log = gameData[i]
+    const deckData = log?.data?.[0]?.args?.args?._private?.API as DeckData
+    if (deckData) {
+      if (deckData1 && (deckData1 as DeckData)?.id !== deckData?.id) {
+        deckData2 = deckData
+        keepLooking = false
+      }
+      if (!deckData1) {
+        deckData1 = deckData
+      }
+    }
+    i++
+  }
+
+  if (!deckData1 || !deckData2) {
+    throw new Error('Deck packets not found in game logs')
+  }
+
+  const deckList1 = await getDeckList(deckData1)
+  const deckList2 = await getDeckList(deckData2)
   const date = new Date(Number(tableInfo.data.gamestart) * 1000)
 
   return {

@@ -1,8 +1,5 @@
-import dotenv from 'dotenv'
 import { fetchReplayCards } from './fetchReplayCards'
 import { saveDecksToFile } from './saveDecksToFile'
-
-dotenv.config()
 
 const tableId: string = process.argv[2]
 

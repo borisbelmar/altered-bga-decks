@@ -14,6 +14,7 @@ export interface Card {
 }
 
 export interface DeckData {
+  id: string
   deckName: string
   cards: Record<string, Card>
 }
@@ -32,8 +33,7 @@ const fetchCardData = async (cardId: string): Promise<{ imagePath: string }> => 
   return response.data
 }
 
-export const getDeckList = async (deckPacket: any): Promise<DeckList> => {
-  const deckData: DeckData = deckPacket.data[0].args.args._private.API
+export const getDeckList = async (deckData: DeckData): Promise<DeckList> => {
   const deckListPromises = Object.values(deckData.cards).map(async (card) => {
     try {
       const cardData = await fetchCardData(card.card.properties.uid)
