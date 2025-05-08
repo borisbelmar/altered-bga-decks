@@ -24,7 +24,8 @@ X_REQUEST_TOKEN=<your-request-token>
 
 - `COOKIE`: Your BGA cookie. You can find it in your browser's developer tools. Use the screenshot below as a reference.
 - `X_REQUEST_TOKEN`: Your BGA request token. You can find it in your browser's developer tools. Use the screenshot below as a reference.
-3.- Run the script
+
+4.- Run the script
 
 ```bash
 yarn start <table-id>
